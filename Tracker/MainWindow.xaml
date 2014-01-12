@@ -27,7 +27,8 @@
         <Label Content="{Binding Rotation.X}" HorizontalAlignment="Left" Margin="81,26,0,0" Grid.Row="1" VerticalAlignment="Top"/>
         <Label Content="{Binding Rotation.Y}" HorizontalAlignment="Left" Margin="81,56,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="0,3.9"/>
         <Label Content="{Binding Rotation.Z}" HorizontalAlignment="Left" Margin="81,78,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="0,3.9"/>
-        <Button x:Name="Calibrate" Content="Calibrate" HorizontalAlignment="Left" Margin="623,52,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75"/> 
+        <Button x:Name="Calibrate" Content="Calibrate" HorizontalAlignment="Left" Margin="623,52,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75"/>
+        <Slider Value="{Binding RotationFilterCutoff}" Margin="10,109,0,0" Grid.Row="1" VerticalAlignment="Top" Maximum="3" SmallChange="0.05" TickFrequency="0.5" HorizontalAlignment="Left" Width="500"/>
 
     </Grid>
 </Controls:MetroWindow>

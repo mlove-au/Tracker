@@ -26,3 +26,5 @@ C:\code\Tracker\Tracker\obj\Debug\App.baml
 C:\code\Tracker\Tracker\obj\Debug\Tracker.csprojResolveAssemblyReference.cache
 C:\code\Tracker\Tracker\obj\Debug\Tracker_MarkupCompile.lref
 C:\code\Tracker\Tracker\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\code\Tracker\Tracker\obj\Debug\VectorVisualizer.baml
+C:\code\Tracker\Tracker\obj\Debug\VectorVisualizer.g.cs

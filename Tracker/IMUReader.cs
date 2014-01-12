@@ -12,11 +12,8 @@ namespace Tracker
     public class IMUReader
     {
         private UdpClient m_client;
-        public IMUReader()
-        {
-            m_client = new UdpClient(5555);
-            m_client.BeginReceive(new AsyncCallback(ReceiveDatagram), this);
-        }        
+
+
 
         public Vector3D Acceleration = new Vector3D(0, 0, 0);
         public Vector3D LinearAcceleration = new Vector3D(0, 0, 0);
@@ -26,13 +23,41 @@ namespace Tracker
         public Vector3D Rotation = new Vector3D(0, 0, 0);
         public Vector3D Position = new Vector3D(0, 0, 0);
         public Vector3D RawRotation = new Vector3D(0, 0, 0);
+        private Vector3D CalibrationRotation = new Vector3D(0, 0, 0);
+
 
         private double m_lastUpdate = 0;
         private object UpdateLock = new object();
         private AHRS.MadgwickAHRS m_filter = new AHRS.MadgwickAHRS(0);
 
-        private VectorFilter m_rotationFilter = new VectorFilter(MathNet.SignalProcessing.Filter.FilterType.LowPass, 0.25);
 
+   
+        private VectorFilter m_rotationFilter;
+
+
+        public IMUReader()
+        {
+            m_client = new UdpClient(5555);
+            m_client.BeginReceive(new AsyncCallback(ReceiveDatagram), this);
+            m_rotationFilter = new VectorFilter(MathNet.SignalProcessing.Filter.FilterType.LowPass, RotationFilterCutoff);
+        }
+
+
+        private double m_rotationFilterCutoff = 0.1;
+        public double RotationFilterCutoff
+        {
+            get
+            {
+                return m_rotationFilterCutoff;
+            }
+
+            set
+            {
+                m_rotationFilter = new VectorFilter(MathNet.SignalProcessing.Filter.FilterType.LowPass, value);
+                m_rotationFilterCutoff = value;
+            }
+        }
+    
         static Vector3D QuarternionToEuler(double[] q)
         {
             double qw = q[0];
@@ -49,17 +74,11 @@ namespace Tracker
         }
 
 
-        static Matrix3D QuarternionToRotationMatrix(double[] q)
-        {
-            Matrix3D r = new Matrix3D();
-            return r;
-        }
-
-        private Vector3D CalibrationRotation = new Vector3D(0, 0, 0);
 
         public void SetCalibratedPosition()
         {
             CalibrationRotation = RawRotation;
+            Position = new Vector3D(0, 0, 0);
         }
 
         private void ReceiveDatagram(IAsyncResult result)
@@ -107,10 +126,10 @@ namespace Tracker
                     Rotation = RawRotation - CalibrationRotation;
 
                     Rotation = m_rotationFilter.Filter(Rotation);
-                    LinearVelocity = LinearVelocity + (LinearAcceleration * timestep);
-                    
-                  //  Position.X = Position.X + (LinearVelocity.X * timestep);
-                  //  Position.Y = Position.Y + (LinearVelocity.Y * timestep);                  
+                    LinearVelocity = LinearAcceleration * timestep;
+                    LinearVelocity *= 5;
+                    Position.X = Position.X + (LinearVelocity.X * timestep);
+                    Position.Y = Position.Y + (LinearVelocity.Y * timestep);                  
                     
                 }
             }

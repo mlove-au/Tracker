@@ -53,14 +53,14 @@ namespace Tracker
             mesh = meshBuilder.ToMesh(true);
             modelGroup.Children.Add(new GeometryModel3D { Geometry = mesh, Material = yellowMaterial, BackMaterial = insideMaterial });
 
-            Model = modelGroup;           
+            Model = modelGroup;
 
             CompositionTarget.Rendering += UpdateModel;
             m_reader = new IMUReader();
 
-            
+
         }
-       
+
 
         private void AddAxisRotation(Transform3DGroup transform, Vector3D axis, double rotation)
         {
@@ -76,8 +76,8 @@ namespace Tracker
 
         private void UpdateModel(object source, EventArgs e)
         {
-           
-           // Add the rotation transform to a Transform3DGroup
+
+            // Add the rotation transform to a Transform3DGroup
             Transform3DGroup myTransform3DGroup = new Transform3DGroup();
             AddAxisRotation(myTransform3DGroup, new Vector3D(1, 0, 0), m_reader.Rotation.X * (180.0 / Math.PI));
             AddAxisRotation(myTransform3DGroup, new Vector3D(0, 1, 0), m_reader.Rotation.Y * (180.0 / Math.PI));
@@ -88,11 +88,11 @@ namespace Tracker
             t.OffsetZ = m_reader.Position.Z;
 
             myTransform3DGroup.Children.Add(t);
-            
+
             this.Rotation = m_reader.Rotation * 180.0 / Math.PI;
             this.Model.Transform = myTransform3DGroup;
             NotifyOfPropertyChange(() => Model);
-                                 
+
         }
 
 
@@ -101,18 +101,29 @@ namespace Tracker
             m_reader.SetCalibratedPosition();
         }
 
-       
-        
+
+
         private Vector3D _rotation;
         public Vector3D Rotation
         {
-            get { return _rotation;  }
+            get { return _rotation; }
             set
             {
                 _rotation = value;
                 NotifyOfPropertyChange(() => Rotation);
             }
         }
+
+        public double RotationFilterCutoff
+        {
+            get { return m_reader.RotationFilterCutoff; }
+            set
+            {
+                m_reader.RotationFilterCutoff = value;
+                NotifyOfPropertyChange(() => RotationFilterCutoff);
+            }
+        }
+
 
         private Model3D _model;
         public Model3D Model
